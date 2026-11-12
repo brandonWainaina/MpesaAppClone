@@ -1,0 +1,332 @@
+package com.example.mpesaappclone
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+private val SendGreen = Color(0xFF48C273)
+private val PayBlue = Color(0xFF1E7CF8)
+private val WithdrawRed = Color(0xFFF82E5B)
+private val AirtimeBlue = Color(0xFF31C5FB)
+private val DarkGreen = Color(0xFF087A45)
+private val PageBackground = Color(0xFFF5F7F6)
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MaterialTheme {
+                MpesaApp()
+            }
+        }
+    }
+}
+
+@Composable
+fun MpesaApp() {
+    var loggedIn by remember { mutableStateOf(false) }
+    var selectedTab by remember { mutableStateOf(0) }
+
+    if (!loggedIn) {
+        WelcomeScreen(onContinue = { loggedIn = true })
+    } else {
+        MainScreen(
+            selectedTab = selectedTab,
+            onTabSelected = { selectedTab = it }
+        )
+    }
+}
+
+@Composable
+fun WelcomeScreen(onContinue: () -> Unit) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = DarkGreen
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(28.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Spacer(Modifier.height(70.dp))
+                Text(
+                    "M-PESA",
+                    color = Color.White,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Spacer(Modifier.height(18.dp))
+                Text(
+                    "Welcome to M-PESA",
+                    color = Color.White,
+                    fontSize = 27.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    "Your money. Your world. Simple, secure and convenient.",
+                    color = Color.White.copy(alpha = 0.88f),
+                    fontSize = 16.sp
+                )
+            }
+
+            Column {
+                Button(
+                    onClick = onContinue,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(54.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = DarkGreen
+                    ),
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Text("SIGN IN", fontWeight = FontWeight.Bold)
+                }
+                Spacer(Modifier.height(18.dp))
+                Text(
+                    "Unofficial educational demo — not a Safaricom service",
+                    color = Color.White.copy(alpha = 0.75f),
+                    fontSize = 11.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MainScreen(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit
+) {
+    Scaffold(
+        containerColor = PageBackground,
+        bottomBar = {
+            NavigationBar(containerColor = Color.White) {
+                val labels = listOf("Home", "Transact", "Services", "Grow")
+                val icons = listOf(
+                    Icons.Default.Home,
+                    Icons.Default.SwapHoriz,
+                    Icons.Default.List,
+                    Icons.Default.ShowChart
+                )
+
+                labels.forEachIndexed { index, label ->
+                    NavigationBarItem(
+                        selected = selectedTab == index,
+                        onClick = { onTabSelected(index) },
+                        icon = { Icon(icons[index], contentDescription = label) },
+                        label = { Text(label) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = DarkGreen,
+                            selectedTextColor = DarkGreen,
+                            indicatorColor = Color(0xFFE1F3E8)
+                        )
+                    )
+                }
+            }
+        }
+    ) { padding ->
+        when (selectedTab) {
+            0 -> HomeScreen(Modifier.padding(padding))
+            1 -> SimplePage("Transact", Modifier.padding(padding))
+            2 -> SimplePage("Services", Modifier.padding(padding))
+            else -> SimplePage("Grow", Modifier.padding(padding))
+        }
+    }
+}
+
+@Composable
+fun HomeScreen(modifier: Modifier = Modifier) {
+    var showBalance by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
+    ) {
+        Spacer(Modifier.height(18.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(Color(0xFFE1F3E8), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Default.Person, null, tint = DarkGreen)
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp)
+            ) {
+                Text("Good Morning", fontSize = 13.sp)
+                Text("Hussein 👋", fontWeight = FontWeight.Bold, fontSize = 19.sp)
+            }
+
+            IconButton(onClick = {}) {
+                Icon(Icons.Default.NotificationsNone, "Notifications")
+            }
+            IconButton(onClick = {}) {
+                Icon(Icons.Default.PieChart, "Statistics")
+            }
+            IconButton(onClick = {}) {
+                Icon(Icons.Default.QrCodeScanner, "QR code")
+            }
+        }
+
+        Spacer(Modifier.height(18.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(25.dp),
+            colors = CardDefaults.cardColors(containerColor = DarkGreen)
+        ) {
+            Column(Modifier.padding(22.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "Balance",
+                        color = Color.White,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = { showBalance = !showBalance }) {
+                        Icon(
+                            if (showBalance) Icons.Default.Visibility
+                            else Icons.Default.VisibilityOff,
+                            "Toggle balance",
+                            tint = Color.White
+                        )
+                    }
+                }
+
+                Text(
+                    if (showBalance) "KSH 0.00" else "KSH •••••",
+                    color = Color.White,
+                    fontSize = 29.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    "Available FULIZA: KSH 500.00",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 13.sp
+                )
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            ActionButton("SEND", "↗", SendGreen)
+            ActionButton("PAY", "▣", PayBlue)
+            ActionButton("WITHDRAW", "↓", WithdrawRed)
+            ActionButton("AIRTIME", "▤", AirtimeBlue)
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "M-PESA STATEMENTS",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+            Text("SEE ALL", color = DarkGreen, fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(Modifier.padding(18.dp)) {
+                Text("No transactions available", color = Color.Gray)
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+        Text("FINANCIAL SERVICES", fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(12.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Default.AccountBalance, null, tint = DarkGreen)
+                Spacer(Modifier.width(12.dp))
+                Column {
+                    Text("M-Shwari", fontWeight = FontWeight.Bold)
+                    Text("Save and borrow", color = Color.Gray, fontSize = 12.sp)
+                }
+            }
+        }
+
+        Spacer(Modifier.height(30.dp))
+    }
+}
+
+@Composable
+fun ActionButton(label: String, symbol: String, color: Color) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(76.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(54.dp)
+                .background(color, CircleShape)
+                .clickable { },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(symbol, color = Color.White, fontSize = 25.sp)
+        }
+        Spacer(Modifier.height(7.dp))
+        Text(label, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+fun SimplePage(title: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(PageBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(title, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+    }
+}
