@@ -226,7 +226,7 @@ fun HomeScreen(modifier: Modifier = Modifier, onNavigate: (Screen) -> Unit) {
             ) {
                 Text("Good Morning", fontSize = 17.sp, color = Color.Black)
                 Text(
-                    "Hussein 👋",
+                    "Wainaina 👋",
                     fontSize = 21.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -295,7 +295,7 @@ fun HomeScreen(modifier: Modifier = Modifier, onNavigate: (Screen) -> Unit) {
                 }
 
                 Text(
-                    "Available FULIZA: KSH 500.00",
+                    "Available FULIZA: KSH 800.00",
                     color = PayBlue,
                     fontSize = 18.sp
                 )
@@ -517,8 +517,6 @@ fun SendAndRequestScreen(onBack: () -> Unit) {
     }
 }
 
-@Composable
-fun SimplePage(title: String, modifier: Modifier = Modifier) {
 @Composable
 fun SimplePage(title: String, modifier: Modifier = Modifier) {
     Box(
