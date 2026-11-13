@@ -48,18 +48,29 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+sealed class Screen {
+    object SendAndRequest : Screen()
+}
+
 @Composable
 fun MpesaApp() {
     var loggedIn by remember { mutableStateOf(false) }
     var selectedTab by remember { mutableStateOf(0) }
+    var currentScreen by remember { mutableStateOf<Screen?>(null) }
 
     if (!loggedIn) {
         WelcomeScreen(onContinue = { loggedIn = true })
     } else {
-        MainScreen(
-            selectedTab = selectedTab,
-            onTabSelected = { selectedTab = it }
-        )
+        when (currentScreen) {
+            Screen.SendAndRequest -> SendAndRequestScreen(
+                onBack = { currentScreen = null }
+            )
+            null -> MainScreen(
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it },
+                onNavigate = { currentScreen = it }
+            )
+        }
     }
 }
 
@@ -125,7 +136,8 @@ fun WelcomeScreen(onContinue: () -> Unit) {
 @Composable
 fun MainScreen(
     selectedTab: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
+    onNavigate: (Screen) -> Unit
 ) {
     Scaffold(
         containerColor = PageBackground,
@@ -166,17 +178,15 @@ fun MainScreen(
             }
         }
     ) { padding ->
-        when (selectedTab) {
-            0 -> HomeScreen(Modifier.padding(padding))
+                when (selectedTab) {
+            0 -> HomeScreen(Modifier.padding(padding), onNavigate = onNavigate)
             1 -> SimplePage("Transact", Modifier.padding(padding))
             2 -> SimplePage("Services", Modifier.padding(padding))
             else -> SimplePage("Grow", Modifier.padding(padding))
         }
-    }
-}
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier, onNavigate: (Screen) -> Unit) {
     var showBalance by remember { mutableStateOf(true) }
 
     Column(
@@ -301,13 +311,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
         ) {
-            ActionButton("SEND AND\nREQUEST", "↗", SendGreen, Modifier.weight(1f))
+                       ActionButton(
+                "SEND AND\nREQUEST", "↗", SendGreen, Modifier.weight(1f),
+                onClick = { onNavigate(Screen.SendAndRequest) }
+            )
             ActionButton("PAY", "▣", PayBlue, Modifier.weight(1f))
             ActionButton("WITHDRAW", "＄", WithdrawRed, Modifier.weight(1f))
-            ActionButton("AIRTIME", "▤", AirtimeBlue, Modifier.weight(1f))
-        }
-
-        Spacer(Modifier.height(38.dp))
+            ActionButton("AIRTIME", "▤", AirtimeBlue, Modifier.weight(1f))        }
 
         // Statements heading
         Row(
@@ -431,7 +441,8 @@ fun ActionButton(
     label: String,
     symbol: String,
     color: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -441,7 +452,7 @@ fun ActionButton(
             modifier = Modifier
                 .size(68.dp)
                 .background(color, CircleShape)
-                .clickable { },
+                .clickable(onClick = onClick),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -462,6 +473,52 @@ fun ActionButton(
     }
 }
 
+@Composable
+fun SendAndRequestScreen(onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PageBackground)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "Send and Request",
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Text(
+                "Send & request UI goes here.",
+                fontSize = 16.sp,
+                color = GreyText
+            )
+        }
+    }
+}
+
+@Composable
+fun SimplePage(title: String, modifier: Modifier = Modifier) {
 @Composable
 fun SimplePage(title: String, modifier: Modifier = Modifier) {
     Box(
