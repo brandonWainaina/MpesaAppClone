@@ -51,6 +51,8 @@ class MainActivity : ComponentActivity() {
 sealed class Screen {
     object SendAndRequest : Screen()
     object Pay : Screen()
+    object withdraw : screen()
+    object airtime : screen()
 }
 
 @Composable
@@ -68,6 +70,12 @@ fun MpesaApp() {
             )
             Screen.Pay -> PayScreen(
                 onBack = { currentScreen = null }
+            )
+            screen.withdraw -> withdrawscreen(
+                onBack = { currentscreen = null }
+            )
+            screen.airtime -> airtimescreen(
+                onBack = { currentscreen = null }
             )
             null -> MainScreen(
                 selectedTab = selectedTab,
@@ -317,7 +325,8 @@ fun HomeScreen(modifier: Modifier = Modifier, onNavigate: (Screen) -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
         ) {
-                                   ActionButton(
+               
+            ActionButton(
                 "SEND AND\nREQUEST", "↗", SendGreen, Modifier.weight(1f),
                 onClick = { onNavigate(Screen.SendAndRequest) }
             )
@@ -325,8 +334,15 @@ fun HomeScreen(modifier: Modifier = Modifier, onNavigate: (Screen) -> Unit) {
                 "PAY", "▣", PayBlue, Modifier.weight(1f),
                 onClick = { onNavigate(Screen.Pay) }
             )
-            ActionButton("WITHDRAW", "＄", WithdrawRed, Modifier.weight(1f))
-            ActionButton("AIRTIME", "▤", AirtimeBlue, Modifier.weight(1f))        }
+                        ActionButton(
+                "WITHDRAW", "＄", WithdrawRed, Modifier.weight(1f),
+                onClick = { onNavigate(Screen.Withdraw) }
+            )
+            ActionButton(
+                "AIRTIME", "▤", AirtimeBlue, Modifier.weight(1f),
+                onClick = { onNavigate(Screen.Airtime) }
+            )       
+            }
 
         // Statements heading
         Row(
@@ -479,6 +495,94 @@ fun ActionButton(
             textAlign = TextAlign.Center,
             lineHeight = 18.sp
         )
+    }
+}
+
+@Composable
+fun AirtimeScreen(onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PageBackground)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "Buy Airtime",
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Text(
+                "Airtime UI goes here.",
+                fontSize = 16.sp,
+                color = GreyText
+            )
+        }
+    }
+}
+
+@Composable
+fun WithdrawScreen(onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PageBackground)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "Withdraw",
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Text(
+                "Withdraw UI goes here.",
+                fontSize = 16.sp,
+                color = GreyText
+            )
+        }
     }
 }
 
