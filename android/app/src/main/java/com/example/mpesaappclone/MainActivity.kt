@@ -51,8 +51,8 @@ class MainActivity : ComponentActivity() {
 sealed class Screen {
     object SendAndRequest : Screen()
     object Pay : Screen()
-    object withdraw : screen()
-    object airtime : screen()
+    object Withdraw : Screen()
+    object Airtime : Screen()
 }
 
 @Composable
@@ -71,11 +71,11 @@ fun MpesaApp() {
             Screen.Pay -> PayScreen(
                 onBack = { currentScreen = null }
             )
-            screen.withdraw -> withdrawscreen(
-                onBack = { currentscreen = null }
+                        Screen.Withdraw -> WithdrawScreen(
+                onBack = { currentScreen = null }
             )
-            screen.airtime -> airtimescreen(
-                onBack = { currentscreen = null }
+            Screen.Airtime -> AirtimeScreen(
+                onBack = { currentScreen = null }
             )
             null -> MainScreen(
                 selectedTab = selectedTab,
