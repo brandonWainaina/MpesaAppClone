@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
 
 sealed class Screen {
     object SendAndRequest : Screen()
+    object Pay : Screen()
 }
 
 @Composable
@@ -61,8 +62,11 @@ fun MpesaApp() {
     if (!loggedIn) {
         WelcomeScreen(onContinue = { loggedIn = true })
     } else {
-        when (currentScreen) {
+                when (currentScreen) {
             Screen.SendAndRequest -> SendAndRequestScreen(
+                onBack = { currentScreen = null }
+            )
+            Screen.Pay -> PayScreen(
                 onBack = { currentScreen = null }
             )
             null -> MainScreen(
@@ -313,11 +317,14 @@ fun HomeScreen(modifier: Modifier = Modifier, onNavigate: (Screen) -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
         ) {
-                       ActionButton(
+                                   ActionButton(
                 "SEND AND\nREQUEST", "↗", SendGreen, Modifier.weight(1f),
                 onClick = { onNavigate(Screen.SendAndRequest) }
             )
-            ActionButton("PAY", "▣", PayBlue, Modifier.weight(1f))
+            ActionButton(
+                "PAY", "▣", PayBlue, Modifier.weight(1f),
+                onClick = { onNavigate(Screen.Pay) }
+            )
             ActionButton("WITHDRAW", "＄", WithdrawRed, Modifier.weight(1f))
             ActionButton("AIRTIME", "▤", AirtimeBlue, Modifier.weight(1f))        }
 
@@ -472,6 +479,50 @@ fun ActionButton(
             textAlign = TextAlign.Center,
             lineHeight = 18.sp
         )
+    }
+}
+
+@Composable
+fun PayScreen(onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PageBackground)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "Pay",
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Text(
+                "Pay UI goes here.",
+                fontSize = 16.sp,
+                color = GreyText
+            )
+        }
     }
 }
 
