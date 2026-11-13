@@ -184,6 +184,8 @@ fun MainScreen(
             2 -> SimplePage("Services", Modifier.padding(padding))
             else -> SimplePage("Grow", Modifier.padding(padding))
         }
+      }
+    }
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, onNavigate: (Screen) -> Unit) {
